@@ -1,0 +1,95 @@
+[
+  {
+    "key": "setup_environment",
+    "title": "Environment Setup",
+    "copy": "Set up your complete FHEVM development environment. Install Node.js, Hardhat, fhevmjs, and configure your workspace to build confidential dApps.",
+    "subsections": [
+      {
+        "key": "install_tools",
+        "title": "Install Development Tools",
+        "copy": "Install Node.js, pnpm, and initialize your project structure."
+      },
+      {
+        "key": "hardhat_setup", 
+        "title": "Hardhat Configuration",
+        "copy": "Set up Hardhat with FHEVM support and configure networks."
+      },
+      {
+        "key": "fhevmjs_setup",
+        "title": "Frontend Dependencies",
+        "copy": "Install and configure fhevmjs for client-side encryption."
+      }
+    ]
+  },
+  {
+    "key": "smart_contract",
+    "title": "Smart Contract Development", 
+    "copy": "Build your AnonymousSurvey smart contract with FHEVM capabilities. Learn encrypted inputs, homomorphic operations, and access control.",
+    "subsections": [
+      {
+        "key": "contract_structure",
+        "title": "Contract Architecture",
+        "copy": "Design the survey contract with encrypted state variables and functions."
+      },
+      {
+        "key": "encrypted_operations",
+        "title": "FHEVM Operations",
+        "copy": "Implement encrypted voting logic with homomorphic aggregation."
+      },
+      {
+        "key": "access_control",
+        "title": "Access Control & Security",
+        "copy": "Set up proper permissions for encrypted data access."
+      }
+    ]
+  },
+  {
+    "key": "testing_deployment",
+    "title": "Testing & Deployment",
+    "copy": "Write comprehensive tests for encrypted operations and deploy your contract to Zama testnet with proper verification.",
+    "subsections": [
+      {
+        "key": "test_setup",
+        "title": "Test Environment",
+        "copy": "Configure testing for FHEVM contracts with encrypted inputs."
+      },
+      {
+        "key": "write_tests",
+        "title": "Contract Testing",
+        "copy": "Test encrypted operations, edge cases, and access control."
+      },
+      {
+        "key": "deploy_testnet",
+        "title": "Testnet Deployment",
+        "copy": "Deploy and verify your contract on Zama testnet."
+      }
+    ]
+  },
+  {
+    "key": "frontend_development",
+    "title": "Frontend Integration",
+    "copy": "Build a complete React frontend with wallet connection, encryption, transaction handling, and result decryption.",
+    "subsections": [
+      {
+        "key": "wallet_connection",
+        "title": "Wallet Integration",
+        "copy": "Connect MetaMask and handle network switching for Zama testnet."
+      },
+      {
+        "key": "encryption_flow",
+        "title": "Client-side Encryption", 
+        "copy": "Encrypt survey responses using fhevmjs before sending to contract."
+      },
+      {
+        "key": "transaction_handling",
+        "title": "Contract Interaction",
+        "copy": "Submit encrypted data and handle transaction confirmations."
+      },
+      {
+        "key": "result_decryption",
+        "title": "Decrypt Results",
+        "copy": "Decrypt and display aggregate survey results for authorized users."
+      }
+    ]
+  }
+]
