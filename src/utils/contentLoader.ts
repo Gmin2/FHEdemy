@@ -1,5 +1,11 @@
 import { marked } from 'marked'
 
+// Configure marked for better code highlighting
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+})
+
 export interface CodeSnippet {
   title: string
   language: string
@@ -11,10 +17,12 @@ export interface StoryStep {
   key: string
   title: string
   copy: string
+  fullContent?: string  // The full markdown content rendered as HTML
   subsections?: {
     key: string
     title: string
     copy: string
+    fullContent?: string
   }[]
 }
 
@@ -26,46 +34,85 @@ export interface TutorialContent {
 // Parse markdown content and extract code blocks
 export function parseMarkdownContent(content: string): CodeSnippet {
   const lines = content.split('\n')
-  
+
   // Extract title (first h1)
   const titleMatch = lines.find(line => line.startsWith('# '))
   const title = titleMatch ? titleMatch.replace('# ', '') : 'Code Example'
-  
-  // Extract code block
+
+  // Find the best code block to show
+  // Priority: 1) After "## Highlight Lines" marker, 2) Largest code block, 3) First code block
+  let allCodeBlocks: { language: string; code: string; startIndex: number }[] = []
   let inCodeBlock = false
-  let language = 'typescript'
-  let codeLines: string[] = []
-  
-  for (const line of lines) {
+  let currentLanguage = 'typescript'
+  let currentCodeLines: string[] = []
+  let currentStartIndex = 0
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
     if (line.startsWith('```')) {
       if (!inCodeBlock) {
         inCodeBlock = true
-        language = line.replace('```', '') || 'typescript'
+        currentLanguage = line.replace('```', '').trim() || 'typescript'
+        currentCodeLines = []
+        currentStartIndex = i
       } else {
-        break
+        // End of code block
+        inCodeBlock = false
+        allCodeBlocks.push({
+          language: currentLanguage,
+          code: currentCodeLines.join('\n'),
+          startIndex: currentStartIndex
+        })
       }
     } else if (inCodeBlock) {
-      codeLines.push(line)
+      currentCodeLines.push(line)
     }
   }
-  
+
   // Extract highlight info
   const highlightMatch = lines.find(line => line.startsWith('## Highlight Lines'))
   let highlight: [number, number] | undefined
+  let selectedCodeBlock = allCodeBlocks[0] // Default to first block
+
   if (highlightMatch) {
-    const nextLine = lines[lines.indexOf(highlightMatch) + 1]
-    if (nextLine && nextLine.includes('-')) {
-      const [start, end] = nextLine.split('-').map(n => parseInt(n.trim()))
-      if (!isNaN(start) && !isNaN(end)) {
-        highlight = [start, end]
+    const highlightIndex = lines.indexOf(highlightMatch)
+    const nextLine = lines[highlightIndex + 1]
+
+    // Parse highlight range
+    if (nextLine) {
+      const trimmed = nextLine.trim()
+      if (trimmed.includes('-')) {
+        const [start, end] = trimmed.split('-').map(n => parseInt(n.trim()))
+        if (!isNaN(start) && !isNaN(end)) {
+          highlight = [start, end]
+        }
+      } else {
+        // Single line highlight
+        const lineNum = parseInt(trimmed)
+        if (!isNaN(lineNum)) {
+          highlight = [lineNum, lineNum]
+        }
       }
     }
+
+    // Find the code block closest BEFORE the highlight marker
+    for (let i = allCodeBlocks.length - 1; i >= 0; i--) {
+      if (allCodeBlocks[i].startIndex < highlightIndex) {
+        selectedCodeBlock = allCodeBlocks[i]
+        break
+      }
+    }
+  } else if (allCodeBlocks.length > 0) {
+    // No highlight marker, select the largest code block
+    selectedCodeBlock = allCodeBlocks.reduce((largest, current) =>
+      current.code.length > largest.code.length ? current : largest
+    )
   }
-  
+
   return {
     title,
-    language,
-    code: codeLines.join('\n'),
+    language: selectedCodeBlock?.language || 'typescript',
+    code: selectedCodeBlock?.code || '// No code available',
     highlight
   }
 }
@@ -73,19 +120,24 @@ export function parseMarkdownContent(content: string): CodeSnippet {
 // Load tutorial content from a specific tutorial directory
 export async function loadTutorialContent(tutorialName: string): Promise<TutorialContent> {
   const basePath = `/content/${tutorialName}`
-  
+
   // Load story configuration
   const storyResponse = await fetch(`${basePath}/story.json`)
   const story: StoryStep[] = await storyResponse.json()
-  
-  // Load code snippets
+
+  // Load code snippets and full content
   const codeSnippets: Record<string, CodeSnippet> = {}
-  
+
   for (const step of story) {
     try {
       const response = await fetch(`${basePath}/${step.key}.md`)
       const content = await response.text()
+
+      // Parse code snippet
       codeSnippets[step.key] = parseMarkdownContent(content)
+
+      // Render full markdown as HTML
+      step.fullContent = await marked.parse(content)
     } catch (error) {
       console.warn(`Failed to load content for ${step.key}:`, error)
       // Fallback to empty content
@@ -94,8 +146,9 @@ export async function loadTutorialContent(tutorialName: string): Promise<Tutoria
         language: 'typescript',
         code: '// Content loading...'
       }
+      step.fullContent = '<p>Content loading...</p>'
     }
-    
+
     // Load subsection content if it exists
     if (step.subsections) {
       for (const subsection of step.subsections) {
@@ -103,6 +156,7 @@ export async function loadTutorialContent(tutorialName: string): Promise<Tutoria
           const response = await fetch(`${basePath}/${subsection.key}.md`)
           const content = await response.text()
           codeSnippets[subsection.key] = parseMarkdownContent(content)
+          subsection.fullContent = await marked.parse(content)
         } catch (error) {
           console.warn(`Failed to load subsection content for ${subsection.key}:`, error)
           // Fallback to empty content
@@ -111,11 +165,12 @@ export async function loadTutorialContent(tutorialName: string): Promise<Tutoria
             language: 'typescript',
             code: '// Content loading...'
           }
+          subsection.fullContent = '<p>Content loading...</p>'
         }
       }
     }
   }
-  
+
   // Load additional snippets that might not be in story (like 'contract')
   const additionalSnippets = ['contract']
   for (const snippetKey of additionalSnippets) {
@@ -127,6 +182,6 @@ export async function loadTutorialContent(tutorialName: string): Promise<Tutoria
       // Snippet doesn't exist, skip it
     }
   }
-  
+
   return { story, codeSnippets }
 }

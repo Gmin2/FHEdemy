@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Home() {
   return (
     <div className="route">
@@ -5,8 +7,8 @@ export default function Home() {
         <h1 className="title">Hello FHEVM</h1>
         <p className="subtitle">Build your first anonymous survey system. Private by design.</p>
         <div className="cta-row">
-          <a className="cta" href="/playground">Try Survey Demo</a>
-          <a className="cta secondary" href="/steps">Start Tutorial</a>
+          <Link className="cta" to="/playground">Try Survey Demo</Link>
+          <Link className="cta secondary" to="/steps">Start Tutorial</Link>
         </div>
         <div className="ring ring-1" aria-hidden />
         <div className="ring ring-2" aria-hidden />
@@ -38,14 +40,14 @@ export default function Home() {
       </section>
 
       <section className="home-actions">
-        <a className="action-card" href="/playground">
+        <Link className="action-card" to="/playground">
           <div className="action-title">Interactive Demo</div>
           <p>Experience the anonymous survey flow with mocked encryption and real-time feedback.</p>
-        </a>
-        <a className="action-card" href="/steps">
+        </Link>
+        <Link className="action-card" to="/steps">
           <div className="action-title">Step-by-Step Guide</div>
           <p>Learn to build confidential surveys: encrypt → submit → aggregate → decrypt results.</p>
-        </a>
+        </Link>
       </section>
     </div>
   )
