@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="route">
       <header className="hero home">
-        <h1 className="title">Hello FHEVM</h1>
+        <h1 className="title">Hello Zema</h1>
         <p className="subtitle">Build your first anonymous survey system. Private by design.</p>
         <div className="cta-row">
           <Link className="cta" to="/playground">Try Survey Demo</Link>
