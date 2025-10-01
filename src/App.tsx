@@ -8,7 +8,6 @@ import { initializeContent } from './mapping'
 
 export default function App() {
   useEffect(() => {
-    // Initialize content loading on app start
     initializeContent()
   }, [])
 
