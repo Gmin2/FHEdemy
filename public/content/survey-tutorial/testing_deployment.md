@@ -129,9 +129,6 @@ it("should accept encrypted rating submission", async function () {
 });
 ```
 
-## Highlight Lines
-5-7
-
 **Key Points:**
 - `fhevm.createEncryptedInput()` - Creates encrypted input bound to Alice and the contract
 - `input.add8(8)` - Encrypts the value 8 as euint8

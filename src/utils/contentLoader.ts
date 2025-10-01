@@ -1,5 +1,16 @@
 import { marked } from 'marked'
 
+// Preprocess content to convert GitBook-style hints to HTML
+function preprocessGitBookHints(content: string): string {
+  // Replace {% hint style="info|warning|danger|success" %} ... {% endhint %}
+  const hintRegex = /\{%\s*hint\s+style="([^"]+)"\s*%\}([\s\S]*?)\{%\s*endhint\s*%\}/g
+
+  return content.replace(hintRegex, (match, style, hintContent) => {
+    const cleanContent = hintContent.trim()
+    return `<div class="hint hint-${style}">\n\n${cleanContent}\n\n</div>`
+  })
+}
+
 // Configure marked for better code highlighting
 marked.setOptions({
   gfm: true,
@@ -136,8 +147,9 @@ export async function loadTutorialContent(tutorialName: string): Promise<Tutoria
       // Parse code snippet
       codeSnippets[step.key] = parseMarkdownContent(content)
 
-      // Render full markdown as HTML
-      step.fullContent = await marked.parse(content)
+      // Preprocess GitBook syntax and render full markdown as HTML
+      const preprocessed = preprocessGitBookHints(content)
+      step.fullContent = await marked.parse(preprocessed)
     } catch (error) {
       console.warn(`Failed to load content for ${step.key}:`, error)
       // Fallback to empty content
@@ -156,7 +168,8 @@ export async function loadTutorialContent(tutorialName: string): Promise<Tutoria
           const response = await fetch(`${basePath}/${subsection.key}.md`)
           const content = await response.text()
           codeSnippets[subsection.key] = parseMarkdownContent(content)
-          subsection.fullContent = await marked.parse(content)
+          const preprocessed = preprocessGitBookHints(content)
+          subsection.fullContent = await marked.parse(preprocessed)
         } catch (error) {
           console.warn(`Failed to load subsection content for ${subsection.key}:`, error)
           // Fallback to empty content

@@ -274,9 +274,6 @@ contract AnonymousSurvey is SepoliaConfig {
 }
 ```
 
-## Highlight Lines
-22-30
-
 ---
 
 ## Key FHEVM Concepts Recap

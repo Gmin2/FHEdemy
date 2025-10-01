@@ -137,9 +137,6 @@ const connectWallet = async () => {
 };
 ```
 
-## Highlight Lines
-38-40
-
 **Key Differences from Old Code:**
 - ✅ Uses `@zama-fhe/relayer-sdk/bundle` instead of `fhevmjs`
 - ✅ Calls `await initSDK()` to load WASM before creating instance
