@@ -11,6 +11,19 @@ function preprocessGitBookHints(content: string): string {
   })
 }
 
+// Add scroll anchor IDs to section headers
+function addScrollAnchors(html: string): string {
+  // Add IDs to h2 headers for scrolling
+  return html.replace(/<h2>(.*?)<\/h2>/g, (match, title) => {
+    // Create ID from title (e.g., "Step 1: Create File" -> "step-1-create-file")
+    const id = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+    return `<h2 id="${id}">${title}</h2>`
+  })
+}
+
 // Configure marked for better code highlighting
 marked.setOptions({
   gfm: true,
@@ -28,12 +41,18 @@ export interface StoryStep {
   key: string
   title: string
   copy: string
+  codeKey?: string  // The code snippet to display
+  highlight?: [number, number]  // Line range to highlight
   fullContent?: string  // The full markdown content rendered as HTML
+  scrollAnchor?: string  // ID to scroll to in the content
   subsections?: {
     key: string
     title: string
     copy: string
+    codeKey?: string
+    highlight?: [number, number]
     fullContent?: string
+    scrollAnchor?: string  // ID to scroll to in the content
   }[]
 }
 
@@ -149,7 +168,9 @@ export async function loadTutorialContent(tutorialName: string): Promise<Tutoria
 
       // Preprocess GitBook syntax and render full markdown as HTML
       const preprocessed = preprocessGitBookHints(content)
-      step.fullContent = await marked.parse(preprocessed)
+      let html = await marked.parse(preprocessed)
+      html = addScrollAnchors(html)
+      step.fullContent = html
     } catch (error) {
       console.warn(`Failed to load content for ${step.key}:`, error)
       // Fallback to empty content
@@ -164,22 +185,28 @@ export async function loadTutorialContent(tutorialName: string): Promise<Tutoria
     // Load subsection content if it exists
     if (step.subsections) {
       for (const subsection of step.subsections) {
-        try {
-          const response = await fetch(`${basePath}/${subsection.key}.md`)
-          const content = await response.text()
-          codeSnippets[subsection.key] = parseMarkdownContent(content)
-          const preprocessed = preprocessGitBookHints(content)
-          subsection.fullContent = await marked.parse(preprocessed)
-        } catch (error) {
-          console.warn(`Failed to load subsection content for ${subsection.key}:`, error)
-          // Fallback to empty content
-          codeSnippets[subsection.key] = {
-            title: 'Loading...',
-            language: 'typescript',
-            code: '// Content loading...'
+        // Ensure subsection's codeKey points to actual code
+        const targetCodeKey = subsection.codeKey || step.codeKey || step.key
+
+        // Load the code file if not already loaded
+        if (targetCodeKey && !codeSnippets[targetCodeKey]) {
+          try {
+            const response = await fetch(`${basePath}/${targetCodeKey}.md`)
+            const content = await response.text()
+            codeSnippets[targetCodeKey] = parseMarkdownContent(content)
+          } catch (error) {
+            console.warn(`Failed to load code for ${targetCodeKey}:`, error)
           }
-          subsection.fullContent = '<p>Content loading...</p>'
         }
+
+        // Create an alias so subsection.key also points to the same code
+        if (targetCodeKey && codeSnippets[targetCodeKey]) {
+          codeSnippets[subsection.key] = codeSnippets[targetCodeKey]
+        }
+
+        // Subsections inherit the parent's fullContent (they show sections of the main tutorial)
+        // This way subsections display the parent's tutorial markdown, not separate files
+        subsection.fullContent = step.fullContent || `<p>${subsection.copy}</p>`
       }
     }
   }

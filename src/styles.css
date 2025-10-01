@@ -221,7 +221,20 @@ input { flex: 1; padding: 10px 12px; border-radius: 12px; border: 1px solid var(
 
 /* Monaco line highlight hook */
 .monaco-editor .view-overlays .current-line ~ .line-decoration,
-.code-highlight { background: var(--highlight); }
+.code-highlight {
+  background: var(--highlight);
+  box-shadow: inset 3px 0 0 var(--primary);
+  position: relative;
+}
+
+/* Enhanced glow effect for highlighted code */
+.monaco-editor .margin-view-overlays .line-numbers {
+  color: var(--muted);
+}
+
+.monaco-editor .view-line {
+  transition: background-color 0.2s ease;
+}
 
 /* GitBook Hint Boxes */
 .hint {

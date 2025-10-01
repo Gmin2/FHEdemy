@@ -1,6 +1,25 @@
 import { loadTutorialContent, CodeSnippet, StoryStep } from './utils/contentLoader'
 
-export type CodeKey = 'connect_wallet' | 'encrypt_input' | 'compute' | 'decrypt_output' | 'contract'
+export type CodeKey =
+  | 'connect_wallet'
+  | 'encrypt_input'
+  | 'compute'
+  | 'decrypt_output'
+  | 'contract'
+  | 'setup_environment'
+  | 'smart_contract'
+  | 'testing_deployment'
+  | 'frontend_development'
+  | 'smart_contract_intro'
+  | 'smart_contract_imports'
+  | 'smart_contract_state'
+  | 'smart_contract_constructor'
+  | 'smart_contract_submit'
+  | 'smart_contract_getters'
+  | 'frontend_wallet'
+  | 'frontend_encrypt'
+  | 'frontend_submit'
+  | 'frontend_decrypt'
 
 // Legacy type for backward compatibility
 type Snippet = CodeSnippet

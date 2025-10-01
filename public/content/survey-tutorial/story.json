@@ -2,21 +2,105 @@
   {
     "key": "setup_environment",
     "title": "Environment Setup",
-    "copy": "Set up your FHEVM development environment using the official Hardhat template. Learn to configure your workspace for building confidential smart contracts on Sepolia testnet."
+    "copy": "Set up your FHEVM development environment using the official Hardhat template. Learn to configure your workspace for building confidential smart contracts on Sepolia testnet.",
+    "codeKey": "setup_environment"
   },
   {
     "key": "smart_contract",
     "title": "Smart Contract Development",
-    "copy": "Build the AnonymousSurvey smart contract with encrypted state variables. Implement homomorphic addition on encrypted ratings while keeping individual votes private forever."
+    "copy": "Build the AnonymousSurvey smart contract with encrypted state variables. Implement homomorphic addition on encrypted ratings while keeping individual votes private forever.",
+    "codeKey": "contract",
+    "subsections": [
+      {
+        "key": "smart_contract_intro",
+        "title": "Introduction",
+        "copy": "Overview of the anonymous survey smart contract",
+        "codeKey": "contract",
+        "highlight": [1, 14],
+        "scrollAnchor": "what-you-ll-learn"
+      },
+      {
+        "key": "smart_contract_imports",
+        "title": "Set Up Imports",
+        "copy": "Import FHEVM libraries and configure contract inheritance",
+        "codeKey": "contract",
+        "highlight": [1, 9],
+        "scrollAnchor": "step-2-set-up-imports-and-inheritance"
+      },
+      {
+        "key": "smart_contract_state",
+        "title": "Define State Variables",
+        "copy": "Add encrypted state variables for survey data",
+        "codeKey": "contract",
+        "highlight": [10, 14],
+        "scrollAnchor": "step-3-define-state-variables"
+      },
+      {
+        "key": "smart_contract_constructor",
+        "title": "Initialize Constructor",
+        "copy": "Set up encrypted values and access control",
+        "codeKey": "contract",
+        "highlight": [10, 14],
+        "scrollAnchor": "step-4-initialize-in-constructor"
+      },
+      {
+        "key": "smart_contract_submit",
+        "title": "Implement submitRating()",
+        "copy": "Core function to submit encrypted ratings with homomorphic addition",
+        "codeKey": "contract",
+        "highlight": [16, 35],
+        "scrollAnchor": "step-5-implement-submitrating-function"
+      },
+      {
+        "key": "smart_contract_getters",
+        "title": "Add Getter Functions",
+        "copy": "View functions to retrieve encrypted results",
+        "codeKey": "contract",
+        "highlight": [37, 43],
+        "scrollAnchor": "step-6-add-getter-functions"
+      }
+    ]
   },
   {
     "key": "testing_deployment",
     "title": "Testing & Deployment",
-    "copy": "Write comprehensive tests using Hardhat's FHEVM plugin. Create encrypted inputs, test homomorphic operations, decrypt results, and deploy to Sepolia testnet."
+    "copy": "Write comprehensive tests using Hardhat's FHEVM plugin. Create encrypted inputs, test homomorphic operations, decrypt results, and deploy to Sepolia testnet.",
+    "codeKey": "contract"
   },
   {
     "key": "frontend_development",
     "title": "Frontend Integration",
-    "copy": "Build a React frontend using @zama-fhe/relayer-sdk. Connect MetaMask, encrypt user ratings client-side, submit transactions, and decrypt aggregate results."
+    "copy": "Build a React frontend using @zama-fhe/relayer-sdk. Connect MetaMask, encrypt user ratings client-side, submit transactions, and decrypt aggregate results.",
+    "codeKey": "connect_wallet",
+    "subsections": [
+      {
+        "key": "frontend_wallet",
+        "title": "Connect Wallet",
+        "copy": "Set up MetaMask connection and network configuration",
+        "codeKey": "connect_wallet",
+        "highlight": [1, 20]
+      },
+      {
+        "key": "frontend_encrypt",
+        "title": "Encrypt User Input",
+        "copy": "Encrypt survey ratings client-side before submission",
+        "codeKey": "encrypt_input",
+        "highlight": [1, 15]
+      },
+      {
+        "key": "frontend_submit",
+        "title": "Submit to Contract",
+        "copy": "Send encrypted data to the survey contract",
+        "codeKey": "compute",
+        "highlight": [1, 12]
+      },
+      {
+        "key": "frontend_decrypt",
+        "title": "Decrypt Results",
+        "copy": "Retrieve and decrypt aggregate survey statistics",
+        "codeKey": "decrypt_output",
+        "highlight": [1, 15]
+      }
+    ]
   }
 ]

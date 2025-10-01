@@ -4,17 +4,17 @@ import { CodeExplorer } from '../components/CodeExplorer'
 import { codeMap, CodeKey } from '../mapping'
 
 export default function StepsPage() {
-  const [activeCode, setActiveCode] = useState<CodeKey>('connect_wallet')
-  const [highlight, setHighlight] = useState<[number, number] | null>(codeMap[activeCode].highlight || null)
+  const [activeCode, setActiveCode] = useState<CodeKey>('contract')
+  const [highlight, setHighlight] = useState<[number, number] | null>(null)
 
-  const onHover = (key: CodeKey | null) => {
+  const onHover = (key: CodeKey | null, customHighlight?: [number, number] | null) => {
     if (!key) return
     setActiveCode(key)
-    setHighlight(codeMap[key].highlight || null)
+    setHighlight(customHighlight !== undefined ? customHighlight : (codeMap[key]?.highlight || null))
   }
-  const onSelect = (key: CodeKey) => {
+  const onSelect = (key: CodeKey, customHighlight?: [number, number] | null) => {
     setActiveCode(key)
-    setHighlight(codeMap[key].highlight || null)
+    setHighlight(customHighlight !== undefined ? customHighlight : (codeMap[key]?.highlight || null))
   }
 
   return (
